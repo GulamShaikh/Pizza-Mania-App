@@ -4,7 +4,7 @@ A stunning, responsive pizza restaurant website built with React and enhanced wi
 
 ## 🌐 Live Demo
 
-**[🚀 View Live Site](https://gulamshaikh.github.io/Pizza-Mania-App/)** *(GitHub Pages)*
+**[🚀 View Live Site](https://gulamshaikh.github.io/Pizza-Mania-App/)** _(GitHub Pages)_
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/GulamShaikh/Pizza-Mania-App)
 

@@ -9,3 +9,10 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Additional configuration for React apps
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"

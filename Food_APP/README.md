@@ -2,7 +2,7 @@
 
 A stunning, responsive pizza restaurant website built with React and enhanced with smooth GSAP animations. Features an interactive menu, dynamic gallery, and professional design optimized for the food delivery industry.
 
-![Pizza Mania Banner](./Food_APP/src/assets/img1.avif)
+![Pizza Mania Banner](./src/assets/img1.avif)
 
 ## ✨ Features
 
@@ -60,8 +60,8 @@ A stunning, responsive pizza restaurant website built with React and enhanced wi
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/yourusername/Pizza-Mania.git
-   cd Pizza-Mania/Food_APP
+   git clone https://github.com/GulamShaikh/Pizza-Mania-App.git
+   cd Pizza-Mania-App
    ```
 
 2. **Install dependencies**
@@ -83,7 +83,7 @@ A stunning, responsive pizza restaurant website built with React and enhanced wi
 4. **View in browser**
 
    ```
-   http://localhost:5173/foodapp/
+   http://localhost:5173/
    ```
 
 5. **Build for production**
@@ -96,7 +96,7 @@ A stunning, responsive pizza restaurant website built with React and enhanced wi
 ## 📁 Project Structure
 
 ```
-Food_APP/
+Pizza-Mania-App/
 ├── public/
 │   └── vite.svg
 ├── src/
@@ -123,6 +123,7 @@ Food_APP/
 ├── package.json                   # Dependencies and scripts
 ├── tailwind.config.js             # Tailwind configuration
 ├── vite.config.js                 # Vite configuration
+├── netlify.toml                   # Netlify deployment config
 └── README.md                      # Project documentation
 ```
 
@@ -393,12 +394,11 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ## 👨‍💻 Author
 
-**[Your Name]** - _Full Stack Developer_
+**[Gulam Dastgir]** - _Developer_
 
-- 🌐 Portfolio: [your-portfolio.com](https://your-portfolio.com)
-- 💼 LinkedIn: [your-linkedin](https://linkedin.com/in/your-profile)
-- 🐙 GitHub: [@yourusername](https://github.com/yourusername)
-- 📧 Email: your.email@example.com
+- 💼 LinkedIn: [Gulam-Shaikh](https://in.linkedin.com/in/gulam-shaikh)
+- 🐙 GitHub: [@GulamShaikh](https://github.com/GulamShaikh)
+- 📧 Email: gulamshaikh2455@gmail.com
 
 ## 📞 Support
 

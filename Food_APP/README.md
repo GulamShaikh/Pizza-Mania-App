@@ -2,6 +2,10 @@
 
 A stunning, responsive pizza restaurant website built with React and enhanced with smooth GSAP animations. Features an interactive menu, dynamic gallery, and professional design optimized for the food delivery industry.
 
+## 🌐 Live Demo
+
+**[🚀 View Live Site](https://gulamshaikh.github.io/Pizza-Mania-App/)**
+
 ![Pizza Mania Banner](./src/assets/img1.avif)
 
 ## ✨ Features

@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+// Import your logo
+import Logo from '../assets/Logo.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,13 +15,26 @@ const Navbar = () => {
   const menuItems = [
     { id: 'home', name: 'Home' },
     { id: 'about', name: 'About' },
-    { id: 'food', name: 'Indian Delights' },
+    { id: 'food', name: 'Pizza Delights' },
     { id: 'menu', name: 'Menu' },
     { id: 'gallery', name: 'Gallery' },
     { id: 'chef', name: 'Our Chef' },
     { id: 'testimonials', name: 'Reviews' },
     { id: 'reserve', name: 'Reserve' }
   ];
+
+  // Initialize navbar position when component mounts
+  useEffect(() => {
+    if (navbarRef.current) {
+      gsap.set(navbarRef.current, { x: "100%" });
+    }
+    if (overlayRef.current) {
+      gsap.set(overlayRef.current, { opacity: 0 });
+    }
+    if (closeBtnRef.current) {
+      gsap.set(closeBtnRef.current, { opacity: 0, scale: 0.8 });
+    }
+  }, []);
 
   // GSAP Animation for opening navbar
   const openNavbar = () => {
@@ -31,7 +46,7 @@ const Navbar = () => {
       duration: 0.3,
       ease: "power2.out"
     });
-
+    
     // Animate navbar sliding in from right
     tl.to(navbarRef.current, {
       x: 0,
@@ -67,22 +82,24 @@ const Navbar = () => {
     }, "-=0.2");
 
     // Animate menu items with stagger
-    tl.fromTo(menuItemsRef.current.children,
-      {
-        opacity: 0,
-        x: 50,
-        scale: 0.8
-      },
-      {
-        opacity: 1,
-        x: 0,
-        scale: 1,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "back.out(1.7)"
-      },
-      "-=0.3"
-    );
+    if (menuItemsRef.current && menuItemsRef.current.children) {
+      tl.fromTo(menuItemsRef.current.children,
+        {
+          opacity: 0,
+          x: 50,
+          scale: 0.8
+        },
+        {
+          opacity: 1,
+          x: 0,
+          scale: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "back.out(1.7)"
+        },
+        "-=0.3"
+      );
+    }
   };
 
   // GSAP Animation for closing navbar
@@ -90,14 +107,16 @@ const Navbar = () => {
     const tl = gsap.timeline();
     
     // Animate menu items out
-    tl.to(menuItemsRef.current.children, {
-      opacity: 0,
-      x: 50,
-      scale: 0.8,
-      duration: 0.3,
-      stagger: 0.05,
-      ease: "power2.in"
-    });
+    if (menuItemsRef.current && menuItemsRef.current.children) {
+      tl.to(menuItemsRef.current.children, {
+        opacity: 0,
+        x: 50,
+        scale: 0.8,
+        duration: 0.3,
+        stagger: 0.05,
+        ease: "power2.in"
+      });
+    }
 
     // Animate close button out
     tl.to(closeBtnRef.current, {
@@ -153,7 +172,10 @@ const Navbar = () => {
 
   // Handle close button click
   const handleClose = () => {
-    toggleNavbar();
+    if (isOpen) {
+      closeNavbar();
+      setIsOpen(false);
+    }
   };
 
   // Handle keyboard navigation
@@ -163,7 +185,10 @@ const Navbar = () => {
 
       switch (e.key) {
         case 'Escape':
-          toggleNavbar();
+          if (isOpen) {
+            closeNavbar();
+            setIsOpen(false);
+          }
           break;
         case 'ArrowLeft':
           e.preventDefault();
@@ -182,76 +207,52 @@ const Navbar = () => {
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+    
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, selectedTab]);
+  }, [isOpen, selectedTab, menuItems]);
 
   // Handle click outside to close
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (isOpen && !navbarRef.current?.contains(e.target) && !burgerRef.current?.contains(e.target)) {
-        toggleNavbar();
+      if (isOpen && 
+          navbarRef.current && 
+          !navbarRef.current.contains(e.target) && 
+          burgerRef.current && 
+          !burgerRef.current.contains(e.target)) {
+        closeNavbar();
+        setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  // Smooth scroll to section with animation
+  // Smooth scroll to section
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      // Animate the selected tab before scrolling
-      const selectedButton = menuItemsRef.current?.children[selectedTab];
-      if (selectedButton) {
-        gsap.to(selectedButton, {
-          scale: 1.1,
-          duration: 0.2,
-          ease: "power2.out",
-          yoyo: true,
-          repeat: 1,
-          onComplete: () => {
-            element.scrollIntoView({ behavior: 'smooth' });
-            // Close navbar after scrolling
-            setTimeout(() => {
-              if (isOpen) {
-                toggleNavbar();
-              }
-            }, 500);
-          }
-        });
-      } else {
-        element.scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => {
-          if (isOpen) {
-            toggleNavbar();
-          }
-        }, 500);
-      }
+      element.scrollIntoView({ behavior: 'smooth' });
+      // Close navbar after scrolling
+      setTimeout(() => {
+        if (isOpen) {
+          closeNavbar();
+          setIsOpen(false);
+        }
+      }, 300);
     }
   };
 
-  // Handle tab click with animation
+  // Handle tab click
   const handleTabClick = (index, sectionId) => {
     setSelectedTab(index);
-    
-    // Animate the clicked button
-    const clickedButton = menuItemsRef.current?.children[index];
-    if (clickedButton) {
-      gsap.to(clickedButton, {
-        scale: 1.05,
-        duration: 0.2,
-        ease: "power2.out",
-        yoyo: true,
-        repeat: 1,
-        onComplete: () => {
-          scrollToSection(sectionId);
-        }
-      });
-    } else {
-      scrollToSection(sectionId);
-    }
+    scrollToSection(sectionId);
   };
 
   return (
@@ -260,7 +261,7 @@ const Navbar = () => {
       <button
         ref={burgerRef}
         onClick={toggleNavbar}
-        className="fixed top-6 right-6 z-50 w-12 h-12 bg-pizza-green hover:bg-green-700 rounded-full flex flex-col justify-center items-center space-y-1 transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-sm"
+        className="fixed top-6 right-6 z-50 w-12 h-12 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 rounded-full flex flex-col justify-center items-center space-y-1 transition-all duration-300 shadow-lg hover:shadow-xl"
         aria-label="Toggle navigation menu"
       >
         <span className="w-6 h-0.5 bg-white transition-all duration-300"></span>
@@ -271,26 +272,21 @@ const Navbar = () => {
       {/* Overlay */}
       <div
         ref={overlayRef}
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm transition-opacity duration-300 ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={toggleNavbar}
+        className="fixed inset-0 bg-black bg-opacity-50 z-40 backdrop-blur-sm pointer-events-none"
+        onClick={handleClose}
+        style={{ pointerEvents: isOpen ? 'auto' : 'none' }}
       />
 
       {/* Right Side Navigation Menu */}
       <nav
         ref={navbarRef}
-        className={`fixed top-0 right-0 h-full w-80 bg-pizza-green/95 backdrop-blur-md z-50 transform translate-x-full transition-transform duration-500 ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className="fixed top-0 right-0 h-full w-80 bg-gradient-to-br from-orange-600/95 to-red-600/95 backdrop-blur-md z-50"
       >
         {/* Close Button */}
         <button
           ref={closeBtnRef}
           onClick={handleClose}
-          className={`absolute top-6 left-6 z-60 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-white/30 ${
-            isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-80'
-          }`}
+          className="absolute top-6 left-6 z-60 w-12 h-12 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm border border-white/30"
           aria-label="Close navigation menu"
         >
           <span className="text-white text-2xl">✕</span>
@@ -301,11 +297,15 @@ const Navbar = () => {
           {/* Header */}
           <div className="text-center mb-8 mt-16">
             <div className="flex items-center justify-center space-x-3 mb-4">
-              <span className="text-3xl">🍕</span>
-              <h1 className="text-2xl font-lobster text-white">Pizza Palace</h1>
+              <img 
+                src={Logo} 
+                alt="Pizza Mania Logo" 
+                className="w-12 h-12 object-contain"
+              />
+              <h1 className="text-2xl font-bold text-white">Pizza Mania</h1>
             </div>
-            <p className="text-white/80 text-sm font-montserrat">
-              Discover authentic Indian flavors alongside our signature pizzas
+            <p className="text-white/80 text-sm">
+              Authentic Italian cuisine & delicious pizzas crafted with love
             </p>
           </div>
 
@@ -318,15 +318,14 @@ const Navbar = () => {
                     key={item.id}
                     onClick={() => handleTabClick(index, item.id)}
                     onMouseEnter={() => setSelectedTab(index)}
-                    className={`group w-full px-4 py-3 rounded-lg text-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-pizza-orange focus:ring-opacity-50 border backdrop-blur-sm text-center ${
+                    className={`group w-full px-4 py-3 rounded-lg text-white transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-opacity-50 border backdrop-blur-sm text-center ${
                       selectedTab === index
-                        ? 'bg-pizza-orange text-white border-pizza-orange scale-105 shadow-lg'
+                        ? 'bg-white/20 text-white border-white/40 scale-105 shadow-lg'
                         : 'bg-white/10 border-white/20 hover:bg-white/20 hover:border-white/40'
                     }`}
                     aria-selected={selectedTab === index}
-                    tabIndex={isOpen ? 0 : -1}
                   >
-                    <span className={`font-semibold font-montserrat text-base ${
+                    <span className={`font-semibold text-base ${
                       selectedTab === index ? 'text-white' : 'text-white/90'
                     }`}>
                       {item.name}
@@ -337,7 +336,7 @@ const Navbar = () => {
               
               {/* Keyboard Navigation Instructions */}
               <div className="mt-4 text-center">
-                <p className="text-white/60 text-xs font-montserrat">
+                <p className="text-white/60 text-xs">
                   Use ← → arrow keys to navigate, Enter to select
                 </p>
               </div>
@@ -347,7 +346,7 @@ const Navbar = () => {
           {/* Footer */}
           <div className="mt-6">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-              <div className="text-white/90 text-xs font-montserrat">
+              <div className="text-white/90 text-xs">
                 <p className="font-semibold mb-2">Contact Us</p>
                 <p>📞 (555) 123-4567</p>
                 <p className="mt-1">🕒 Open daily 11AM-10PM</p>
@@ -361,4 +360,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar; 
+export default Navbar;

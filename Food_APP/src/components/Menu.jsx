@@ -2,6 +2,20 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+// Import your local images
+import img1 from '../assets/img1.avif';
+import img2 from '../assets/img2.avif';
+import img3 from '../assets/img3.avif';
+import img4 from '../assets/img4.avif';
+import img5 from '../assets/img5.avif';
+import img6 from '../assets/img6.avif';
+import drink1 from '../assets/drink1.avif';
+import drink2 from '../assets/drink2.avif';
+import drink3 from '../assets/drink3.avif';
+import muffin from '../assets/pexels-muffin-1653877.jpg';
+import grizzlybear from '../assets/pexels-grizzlybear-1166120.jpg';
+import brettjordan from '../assets/pexels-brettjordan-825661.jpg';
+
 gsap.registerPlugin(ScrollTrigger);
 
 // Reusable Product Card Component
@@ -31,15 +45,24 @@ const ProductCard = ({ product, onAddToCart }) => {
       ref={cardRef}
       className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group"
     >
-      {/* Product Image */}
-      <div className="relative h-48 bg-gradient-to-br from-pizza-orange to-pizza-red flex items-center justify-center">
-        <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-          {product.icon}
-        </span>
+      {/* Product Image - REPLACED EMOJI WITH ACTUAL IMAGES */}
+      <div className="relative h-48 overflow-hidden">
+        <img 
+          src={product.image} 
+          alt={product.name}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          onError={(e) => {
+            e.target.style.backgroundColor = '#f3f4f6';
+            e.target.style.display = 'flex';
+            e.target.style.alignItems = 'center';
+            e.target.style.justifyContent = 'center';
+            e.target.innerHTML = '<span style="color: #6b7280; font-size: 14px;">Loading...</span>';
+          }}
+        />
         
         {/* Discount Badge */}
         {product.discount && (
-          <div className="absolute top-4 right-4 bg-pizza-red text-white px-3 py-1 rounded-full text-sm font-bold">
+          <div className="absolute top-4 right-4 bg-gradient-to-r from-orange-600 to-red-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
             -{product.discount}%
           </div>
         )}
@@ -47,7 +70,7 @@ const ProductCard = ({ product, onAddToCart }) => {
 
       {/* Product Info */}
       <div className="p-6">
-        <h3 className="text-xl font-semibold text-pizza-green mb-2">
+        <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors duration-300">
           {product.name}
         </h3>
         <p className="text-gray-600 text-sm mb-4 line-clamp-2">
@@ -59,7 +82,7 @@ const ProductCard = ({ product, onAddToCart }) => {
           <div className="flex items-center gap-2">
             {product.discount ? (
               <>
-                <span className="text-2xl font-bold text-pizza-orange">
+                <span className="text-2xl font-bold text-orange-600">
                   ${product.discountedPrice}
                 </span>
                 <span className="text-gray-400 line-through">
@@ -67,7 +90,7 @@ const ProductCard = ({ product, onAddToCart }) => {
                 </span>
               </>
             ) : (
-              <span className="text-2xl font-bold text-pizza-orange">
+              <span className="text-2xl font-bold text-orange-600">
                 ${product.price}
               </span>
             )}
@@ -75,7 +98,7 @@ const ProductCard = ({ product, onAddToCart }) => {
           
           <button 
             onClick={() => onAddToCart(product)}
-            className="bg-pizza-green hover:bg-green-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105"
+            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 transform hover:scale-105"
           >
             Add to Cart
           </button>
@@ -123,6 +146,7 @@ const Menu = () => {
     { id: 'combos', name: 'Combos', icon: '🍽️' }
   ];
 
+  // UPDATED PRODUCTS WITH YOUR ACTUAL IMAGES
   const products = {
     pizza: [
       {
@@ -132,7 +156,7 @@ const Menu = () => {
         price: 18.99,
         discountedPrice: 15.99,
         discount: 15,
-        icon: "🍕"
+        image: img1  // ← REPLACED icon with image
       },
       {
         id: 2,
@@ -141,30 +165,30 @@ const Menu = () => {
         price: 22.99,
         discountedPrice: 19.99,
         discount: 13,
-        icon: "🍕"
+        image: img2  // ← REPLACED icon with image
       },
       {
         id: 3,
         name: "Veggie Delight",
         description: "Fresh vegetables, mushrooms, and olives on whole wheat crust",
         price: 20.99,
-        icon: "🍕"
+        image: img3  // ← REPLACED icon with image
       },
       {
         id: 4,
         name: "BBQ Chicken",
         description: "Grilled chicken with BBQ sauce, red onions, and cilantro",
         price: 24.99,
-        icon: "🍕"
+        image: img4  // ← REPLACED icon with image
       }
     ],
     drinks: [
       {
         id: 5,
-        name: "Fresh Lemonade",
-        description: "Hand-squeezed lemons with a hint of mint",
+        name: "Fresh Orange Juice",
+        description: "Hand-squeezed oranges with a hint of freshness",
         price: 4.99,
-        icon: "🧃"
+        image: drink1  // ← REPLACED icon with image
       },
       {
         id: 6,
@@ -173,32 +197,32 @@ const Menu = () => {
         price: 6.99,
         discountedPrice: 5.99,
         discount: 14,
-        icon: "🧃"
+        image: drink2  // ← REPLACED icon with image
       },
       {
         id: 7,
         name: "Iced Coffee",
         description: "Cold brew with cream and vanilla",
         price: 5.99,
-        icon: "🧃"
+        image: drink3  // ← REPLACED icon with image
       },
       {
         id: 8,
-        name: "Sparkling Water",
-        description: "Natural spring water with lemon or lime",
+        name: "Fresh Lemonade",
+        description: "Hand-squeezed lemons with a hint of mint",
         price: 3.99,
-        icon: "🧃"
+        image: drink1  // ← Using drink1 again
       }
     ],
     combos: [
       {
         id: 9,
-        name: "Pizza + Drink",
+        name: "Pizza + Drink Combo",
         description: "Any medium pizza with your choice of beverage",
         price: 24.99,
         discountedPrice: 21.99,
         discount: 12,
-        icon: "🍽️"
+        image: grizzlybear  // ← REPLACED icon with image
       },
       {
         id: 10,
@@ -207,23 +231,23 @@ const Menu = () => {
         price: 49.99,
         discountedPrice: 44.99,
         discount: 10,
-        icon: "🍽️"
+        image: brettjordan  // ← REPLACED icon with image
       },
       {
         id: 11,
         name: "Lunch Special",
         description: "Personal pizza with salad and drink",
         price: 14.99,
-        icon: "🍽️"
+        image: img5  // ← REPLACED icon with image
       },
       {
         id: 12,
-        name: "Party Pack",
-        description: "3 large pizzas, 3 sides, and 6 drinks",
-        price: 69.99,
-        discountedPrice: 59.99,
-        discount: 14,
-        icon: "🍽️"
+        name: "Dessert Combo",
+        description: "Chocolate muffin with coffee or smoothie",
+        price: 12.99,
+        discountedPrice: 10.99,
+        discount: 15,
+        image: muffin  // ← REPLACED icon with image
       }
     ]
   };
@@ -241,11 +265,11 @@ const Menu = () => {
         <div className="text-center mb-12">
           <h2 
             ref={titleRef}
-            className="text-4xl md:text-5xl font-lobster text-pizza-green mb-4"
+            className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
           >
-            Our Menu
+            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Menu</span>
           </h2>
-          <p className="text-lg text-gray-600 font-montserrat max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Discover our handcrafted pizzas, refreshing beverages, and amazing combo deals
           </p>
         </div>
@@ -257,10 +281,10 @@ const Menu = () => {
               <button
                 key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+                className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
                   activeCategory === category.id
-                    ? 'bg-pizza-orange text-white shadow-lg'
-                    : 'text-gray-600 hover:text-pizza-orange'
+                    ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:text-orange-600'
                 }`}
               >
                 <span className="mr-2">{category.icon}</span>
@@ -280,9 +304,21 @@ const Menu = () => {
             />
           ))}
         </div>
+
+        {/* View Full Menu Button */}
+        <div className="text-center mt-16">
+          <button 
+            className="bg-gradient-to-r from-orange-600 to-red-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+            onClick={() => {
+              console.log('View Full Menu clicked');
+            }}
+          >
+            View Full Menu & Order Online
+          </button>
+        </div>
       </div>
     </section>
   );
 };
 
-export default Menu; 
+export default Menu;

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import img1 from '../assets/img1.avif'; // ← CHANGE THIS TO ANY IMAGE
 // Register ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { gsap } from 'gsap';
 
 const ImageMarquee = ({
@@ -12,91 +12,120 @@ const ImageMarquee = ({
   const marqueeRef = useRef(null);
   const containerRef = useRef(null);
   const animationRef = useRef(null);
+  const isAnimatingRef = useRef(false);
 
-  useEffect(() => {
+  const startAnimation = useCallback(() => {
     const marqueeElement = marqueeRef.current;
     const containerElement = containerRef.current;
 
-    if (!marqueeElement || !containerElement) return;
+    if (!marqueeElement || !containerElement || images.length === 0 || isAnimatingRef.current) return;
 
-    const imageElements = marqueeElement.querySelectorAll('img');
-    let loadedImages = 0;
+    // Clear any existing animation
+    if (animationRef.current) {
+      animationRef.current.kill();
+      animationRef.current = null;
+    }
 
-    const startAnimation = () => {
+    // Force a reflow to ensure DOM is ready
+    marqueeElement.offsetHeight;
+
+    // Wait for next frame to ensure images are rendered
+    requestAnimationFrame(() => {
       const totalWidth = marqueeElement.scrollWidth;
-      const singleSetWidth = totalWidth / 2;
+      const singleSetWidth = totalWidth / 2; // Since we duplicate images
+      
+      if (singleSetWidth <= 0) {
+        // If width calculation fails, retry after a short delay
+        setTimeout(startAnimation, 200);
+        return;
+      }
+
       const duration = singleSetWidth / speed;
 
-      gsap.set(marqueeElement, { x: 0 });
+      // Reset position
+      gsap.set(marqueeElement, { 
+        x: 0,
+        force3D: true,
+        willChange: 'transform'
+      });
 
+      // Create infinite loop animation
       animationRef.current = gsap.to(marqueeElement, {
         x: -singleSetWidth,
         duration: duration,
         ease: 'none',
-        repeat: -1
+        repeat: -1,
+        force3D: true,
+        willChange: 'transform'
       });
 
+      isAnimatingRef.current = true;
+
+      // Mouse interactions
       const handleMouseEnter = () => {
-        gsap.to(animationRef.current, {
-          timeScale: 0,
-          duration: 0.5,
-          ease: 'power2.out'
-        });
+        if (animationRef.current) {
+          gsap.to(animationRef.current, {
+            timeScale: 0.1, // Slow down instead of stopping completely
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        }
       };
 
       const handleMouseLeave = () => {
-        gsap.to(animationRef.current, {
-          timeScale: 1,
-          duration: 0.5,
-          ease: 'power2.out'
-        });
+        if (animationRef.current) {
+          gsap.to(animationRef.current, {
+            timeScale: 1,
+            duration: 0.3,
+            ease: 'power2.out'
+          });
+        }
       };
 
       containerElement.addEventListener('mouseenter', handleMouseEnter);
       containerElement.addEventListener('mouseleave', handleMouseLeave);
 
+      // Return cleanup function
       return () => {
+        isAnimatingRef.current = false;
         if (animationRef.current) {
           animationRef.current.kill();
+          animationRef.current = null;
         }
         containerElement.removeEventListener('mouseenter', handleMouseEnter);
         containerElement.removeEventListener('mouseleave', handleMouseLeave);
       };
-    };
-
-    if (imageElements.length === 0) {
-      startAnimation();
-    } else {
-      imageElements.forEach((img) => {
-        if (img.complete) {
-          loadedImages++;
-        } else {
-          img.onload = () => {
-            loadedImages++;
-            if (loadedImages === imageElements.length) {
-              startAnimation();
-            }
-          };
-          img.onerror = () => {
-            console.error('Failed to load image:', img.src);
-            loadedImages++;
-            if (loadedImages === imageElements.length) {
-              startAnimation();
-            }
-          };
-        }
-      });
-
-      if (loadedImages === imageElements.length) {
-        startAnimation();
-      }
-    }
-
-    return startAnimation;
-
+    });
   }, [images, speed, direction]);
 
-  if (!images.length) return null;
+  useEffect(() => {
+    if (images.length === 0) return;
+
+    // Start animation with a delay to ensure everything is loaded
+    const timer = setTimeout(startAnimation, 300);
+
+    return () => {
+      clearTimeout(timer);
+      isAnimatingRef.current = false;
+      if (animationRef.current) {
+        animationRef.current.kill();
+        animationRef.current = null;
+      }
+    };
+  }, [startAnimation]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      isAnimatingRef.current = false;
+      if (animationRef.current) {
+        animationRef.current.kill();
+        animationRef.current = null;
+      }
+    };
+  }, []);
+
+  if (!images || images.length === 0) return null;
 
   return (
     <div
